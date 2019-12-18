@@ -2,15 +2,11 @@ preload(main);
 
 function main(){
 	//set canvas dimensions
-	canvas.width = board_size;
-	canvas.height = board_size;
-	canvas.style.left = `${(window.innerWidth-board_size)/2}px`;
-	canvas.style.top = `${(window.innerHeight-board_size)/2}px`;
-	canvas.style.position = "absolute";
-	//new_board.show_board();
+	set_canvas_dimensions();
+
 	plot_canvas();
 	plot_board();
 
-	canvas.addEventListener('click',mouse_click);
+	piece_canvas.addEventListener('click',mouse_click);
 }
 
