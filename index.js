@@ -10,5 +10,7 @@ function main(){
 	//new_board.show_board();
 	plot_canvas();
 	plot_board();
+
+	canvas.addEventListener('click',mouse_click);
 }
 

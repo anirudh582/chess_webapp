@@ -74,3 +74,30 @@ function plot_board(){
 		ypos+=tile_size;
 	}
 }
+
+function get_mouse_pos(){
+	let rect = canvas.getBoundingClientRect();
+	return {
+          x: event.clientX - rect.left,
+          y: event.clientY - rect.top
+        };
+}
+
+function coord_inside_board(coord) {
+	return coord[0]>=0 && coord[1]>=0 && coord[1]<=7 && coord[1]<=7;
+}
+
+function null_piece(coord){
+	return new_board.board[coord[1]][coord[0]].id=="-";
+}
+
+function mouse_click() {
+	let mouse_pos = get_mouse_pos();
+	let coord = [Math.floor(mouse_pos.x/tile_size),Math.floor(mouse_pos.y/tile_size)];
+	console.log(coord)
+	if(!null_piece(coord)) {
+		c.fillStyle = "#799C82";
+		c.globalAlpha = 0.2;
+		c.fillRect(coord[0]*tile_size,coord[1]*tile_size,tile_size,tile_size);
+	}
+}
