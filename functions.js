@@ -3,7 +3,7 @@ function preload(callback) {
 
 	function onload(){
 		count++;
-		if(count==12) {
+		if(count==13) {
 			callback();
 		}
 	}
