@@ -67,6 +67,7 @@ function plot_canvas() {
 
 
 function plot_board(){
+	p.clearRect(0,0,piece_canvas.width,piece_canvas.height);
 	let xpos=0;
 	let ypos=0;
 	for(let i=0;i<8;i++){
@@ -103,9 +104,79 @@ function null_piece(coord){
 	return new_board.board[coord[1]][coord[0]].id=="-";
 }
 
-function clear_rect(canvas) {
-	if(drawn_rect[0]>=0) 
-		canvas.clearRect(drawn_rect[0]*tile_size,drawn_rect[1]*tile_size,tile_size,tile_size);
+function create_piece(piece_id,alliance,coord){
+	let new_piece = undefined;
+	switch(piece_id) {
+		case 'R':
+			new_piece = new Rook(alliance,coord);
+			break;
+		case 'N':
+			new_piece = new Knight(alliance,coord);
+			break;
+		case 'B':
+			new_piece = new Bishop(alliance,coord);
+			break;
+		case 'Q':
+			new_piece = new Queen(alliance,coord);
+			break;
+		case 'K':
+			new_piece = new King(alliance,coord);
+			break;
+		case 'P':
+			new_piece = new Pawn(alliance,coord);
+			break;
+		default:
+			console.log("Error, invalid piece. Cannot creat piece")
+
+	}
+	return new_piece;
+
+}
+
+function draw_transparent_green_tile(coord) {
+	m.fillStyle = "#46eb34";
+	m.globalAlpha = 0.4;
+	m.fillRect(coord[0]*tile_size,coord[1]*tile_size,tile_size,tile_size);
+}
+
+function generate_animation(init_coord,final_coord,callback) {
+
+	function exit(){
+		a.clearRect(0, 0, animation_canvas.width, animation_canvas.height);
+		callback();
+	}
+	let x=init_coord[0]*tile_size;
+	let y=init_coord[1]*tile_size;
+	let x1=final_coord[0]*tile_size;
+	let y1=final_coord[1]*tile_size;
+
+	let slope = (y1-y)/(x1-x);
+	incr = (y1!=y) ? (y1-y)*(Math.abs((y1-y)/tile_size))/(Math.abs(y1-y)*0.1) : (x1-x)*(Math.abs((x1-x)/tile_size))/(Math.abs(x1-x)*0.1);
+	animate();
+	function animate() {
+	  a.clearRect(0, 0, animation_canvas.width, animation_canvas.height);  
+	  a.drawImage(animation_img, x, y,tile_size,tile_size);  
+	  if(y1!=y){                    
+		y += incr;
+		x += incr/slope;
+		if (y1>y)
+			if ( y1-y > incr ) requestAnimationFrame(animate);
+			else exit();
+		else if(y1<y)
+		  	if ( y1-y < incr ) requestAnimationFrame(animate);
+			else exit();
+	  }
+	  else {
+		x += incr;
+		y += incr*slope;
+		if (x1>x)
+			if ( x1-x > incr ) requestAnimationFrame(animate);
+			else exit();
+		else if(x1<x)
+			if ( x1-x < incr ) requestAnimationFrame(animate);
+			else exit();
+	  }
+	}
 }
 
 function mouse_click() {
@@ -113,12 +184,20 @@ function mouse_click() {
 	let coord = [Math.floor(mouse_pos.x/tile_size),Math.floor(mouse_pos.y/tile_size)];
 	if(!null_piece(coord) && marked_piece==undefined) {
 		m.clearRect(0,0,mark_canvas.width,mark_canvas.height);
-		m.fillStyle = "#46eb34";
-		m.globalAlpha = 0.4;
-		m.fillRect(coord[0]*tile_size,coord[1]*tile_size,tile_size,tile_size);
-		drawn_rect = coord;
+		draw_transparent_green_tile(coord);
+		marked_piece = new_board.board[coord[1]][coord[0]];
 	}
-	else {
-
+	else if (marked_piece!=undefined) {
+		if(coord[0]==marked_piece.coord[0] && coord[1] == marked_piece.coord[1]) {
+			m.clearRect(0,0,mark_canvas.width,mark_canvas.height);
+		}
+		else {
+			draw_transparent_green_tile(coord);
+			new_board.board[marked_piece.coord[1]][marked_piece.coord[0]] = new Null(marked_piece.coord);
+			new_board.board[coord[1]][coord[0]] = create_piece(marked_piece.id,marked_piece.alliance,coord);
+			animation_img = images[marked_piece.alliance+marked_piece.id];
+			generate_animation(marked_piece.coord,coord,plot_board);
+		}
+		marked_piece = undefined;
 	}
 }
