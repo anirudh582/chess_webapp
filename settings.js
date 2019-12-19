@@ -1,7 +1,7 @@
 //global game settings
 var piece_theme='merida'
 var board_theme='blue'
-var board_size = 0.75*Math.min(window.innerWidth,window.innerHeight);
+var board_size = Math.min(window.innerWidth,window.innerHeight);
 var tile_size = board_size/8;
 var flip = false
 var board_canvas = document.getElementById('board');
