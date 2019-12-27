@@ -21,4 +21,4 @@ def handle_move(move):
 
 if __name__ == '__main__':
 	socketio.run(app)
-	# app.run()
+	#app.run()

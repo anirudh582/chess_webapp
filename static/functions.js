@@ -202,11 +202,6 @@ function mouse_click() {
 			m.clearRect(0,0,mark_canvas.width,mark_canvas.height);
 		}
 		else {
-			// draw_transparent_green_tile(coord);
-			// new_board.board[marked_piece.coord[1]][marked_piece.coord[0]] = new Null(marked_piece.coord);
-			// new_board.board[coord[1]][coord[0]] = create_piece(marked_piece.id,marked_piece.alliance,coord);
-			// animation_img = images[marked_piece.alliance+marked_piece.id];
-			// generate_animation(marked_piece.coord,coord,plot_board);
 			accept_move(marked_piece.coord,coord);
 			socket.emit('move', {init_coord:marked_piece.coord, final_coord:coord});
 		}

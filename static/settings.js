@@ -17,11 +17,6 @@ var p =  piece_canvas.getContext('2d');
 //socket
 var socket = io();
 
-socket.on('connect', function() {
-	socket.send('User has connected!');
-});
-
-
 //instantiate a new board object
 var new_board = new ChessBoard();
 
