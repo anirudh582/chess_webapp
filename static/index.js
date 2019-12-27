@@ -8,5 +8,9 @@ function main(){
 	plot_board();
 
 	piece_canvas.addEventListener('click',mouse_click);
+
+	socket.on('move', function (move) {
+		receive_move(move);
+	});
 }
 
