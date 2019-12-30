@@ -256,6 +256,7 @@ function mouse_click() {
 		draw_transparent_green_tile(coord);
 		marked_piece = new_board.board[coord[1]][coord[0]];
 		marked_piece.allowed_moves();
+		console.log(allowed_moves);
 		mark_allowed_moves(allowed_moves,marked_piece);
 		m.fill("evenodd");
 	}

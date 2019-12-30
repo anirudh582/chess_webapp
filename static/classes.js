@@ -4,6 +4,44 @@ class Bishop {
 		this.alliance = alliance;
 		this.coord = coord;
 	}
+	allowed_moves() {
+		allowed_moves = [];
+		//diag1
+		let square = ([this.coord[0]+1,this.coord[1]+1]);
+        while (coord_inside_board(square) && null_piece(square)) {
+            allowed_moves.push(square);
+            square = [square[0]+1,square[1]+1];
+        }
+        if (coord_inside_board(square) && enemy_piece(square,this.alliance))
+            allowed_moves.push(square);
+
+        //diag2
+        square = ([this.coord[0]-1,this.coord[1]+1]);
+        while (coord_inside_board(square) && null_piece(square)) {
+            allowed_moves.push(square);
+            square = [square[0]-1,square[1]+1];
+        }
+        if (coord_inside_board(square) && enemy_piece(square,this.alliance))
+            allowed_moves.push(square);
+
+        //diag3
+        square = ([this.coord[0]-1,this.coord[1]-1]);
+        while (coord_inside_board(square) && null_piece(square)) {
+            allowed_moves.push(square);
+            square = [square[0]-1,square[1]-1];
+        }
+        if (coord_inside_board(square) && enemy_piece(square,this.alliance))
+            allowed_moves.push(square);
+
+        //diag4
+        square = ([this.coord[0]+1,this.coord[1]-1]);
+        while (coord_inside_board(square) && null_piece(square)) {
+            allowed_moves.push(square);
+            square = [square[0]+1,square[1]-1];
+        }
+        if (coord_inside_board(square) && enemy_piece(square,this.alliance))
+            allowed_moves.push(square);
+	}
 }
 
 class King {
@@ -51,6 +89,60 @@ class Pawn {
 		this.id = 'P';
 		this.alliance = alliance;
 		this.coord = coord;
+	}
+
+	allowed_moves(){
+		allowed_moves=[];
+		let temp=[];
+		if(this.alliance=='w'){
+			if(this.coord[1]==6){
+				temp.push([this.coord[0],this.coord[1]-1]);
+                temp.push([this.coord[0],this.coord[1]-2]);
+            }
+            else                	
+            	temp.push([this.coord[0],this.coord[1]-1]);
+		}
+
+		else{
+            if (this.coord[1] ==1){
+                temp.push([this.coord[0],this.coord[1]+1]);
+                temp.push([this.coord[0],this.coord[1]+2]);
+            }
+            else
+                temp.push([this.coord[0],this.coord[1]+1]);
+        }
+
+        for(let i=0;i<temp.length;i++) {
+        	if(coord_inside_board(temp[i]) && null_piece(temp[i]))
+        		allowed_moves.push(temp[i]);
+        	else
+        		break;
+        }
+
+        //check for pawn captures
+        if(this.alliance == 'w'){
+            let diag_squares = [];
+            diag_squares.push([this.coord[0]+1,this.coord[1]-1]);
+            diag_squares.push([this.coord[0]-1,this.coord[1]-1]);
+            for(let i=0;i<diag_squares.length;i++)
+                if (coord_inside_board(diag_squares[i]) && enemy_piece(diag_squares[i],this.alliance))
+                    allowed_moves.push(diag_squares[i]);
+            
+        }
+
+        //check for pawn captures
+        if(this.alliance == 'b'){
+            let diag_squares = [];
+            diag_squares.push([this.coord[0]+1,this.coord[1]+1]);
+            diag_squares.push([this.coord[0]-1,this.coord[1]+1]);
+            for(let i=0;i<diag_squares.length;i++)
+                if (coord_inside_board(diag_squares[i]) && enemy_piece(diag_squares[i],this.alliance))
+                    allowed_moves.push(diag_squares[i]);
+            
+        }
+
+        //implement pawn en-passant
+
 	}
 }
 
