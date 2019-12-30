@@ -24,7 +24,13 @@ var new_board = new ChessBoard();
 var images = [];
 var images_board_loaded = false
 
+//other variables
 var marked_piece = undefined;
 animation_image = undefined;
 
 var allowed_moves = [];
+
+//colors
+var green = "#46eb34";
+//var green = "#4a7d64";
+var alpha = 0.6;

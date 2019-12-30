@@ -144,29 +144,29 @@ function create_piece(piece_id,alliance,coord){
 }
 
 function draw_transparent_green_tile(coord) {
-	m.fillStyle = "#46eb34";
-	m.globalAlpha = 0.4;
+	m.fillStyle = green;
+	m.globalAlpha = alpha;
 	m.rect(coord[0]*tile_size,coord[1]*tile_size,tile_size,tile_size);
 	m.closePath();
 }
 
 function draw_green_circle(coord){
-	m.fillStyle = "#46eb34";
-	m.globalAlpha = 0.4;
+	m.fillStyle = green;
+	m.globalAlpha = alpha;
 	m.arc(coord[0]*tile_size+tile_size/2,coord[1]*tile_size+tile_size/2,0.15*tile_size,2*Math.PI,false);
 	m.closePath();
 }
 
 function draw_red_circle(coord){
 	m.fillStyle = "#ff0000";
-	m.globalAlpha = 0.4;
+	m.globalAlpha = alpha;
 	m.arc(coord[0]*tile_size+tile_size/2,coord[1]*tile_size+tile_size/2,0.15*tile_size,2*Math.PI,false);
 	m.closePath();
 }
 
 function draw_attack_mark(coord){
-	m.fillStyle = "#46eb34";
-	m.globalAlpha = 0.4;
+	m.fillStyle = green;
+	m.globalAlpha = alpha;
 	m.rect(coord[0]*tile_size,coord[1]*tile_size,tile_size,tile_size);
 	m.arc(coord[0]*tile_size+tile_size/2,coord[1]*tile_size+tile_size/2,tile_size/2,2*Math.PI,false);
 	m.closePath();

@@ -152,6 +152,80 @@ class Queen {
 		this.alliance = alliance;
 		this.coord = coord;
 	}
+
+	allowed_moves(){
+		allowed_moves=[];
+		//diag1
+		let square = ([this.coord[0]+1,this.coord[1]+1]);
+        while (coord_inside_board(square) && null_piece(square)) {
+            allowed_moves.push(square);
+            square = [square[0]+1,square[1]+1];
+        }
+        if (coord_inside_board(square) && enemy_piece(square,this.alliance))
+            allowed_moves.push(square);
+
+        //diag2
+        square = ([this.coord[0]-1,this.coord[1]+1]);
+        while (coord_inside_board(square) && null_piece(square)) {
+            allowed_moves.push(square);
+            square = [square[0]-1,square[1]+1];
+        }
+        if (coord_inside_board(square) && enemy_piece(square,this.alliance))
+            allowed_moves.push(square);
+
+        //diag3
+        square = ([this.coord[0]-1,this.coord[1]-1]);
+        while (coord_inside_board(square) && null_piece(square)) {
+            allowed_moves.push(square);
+            square = [square[0]-1,square[1]-1];
+        }
+        if (coord_inside_board(square) && enemy_piece(square,this.alliance))
+            allowed_moves.push(square);
+
+        //diag4
+        square = ([this.coord[0]+1,this.coord[1]-1]);
+        while (coord_inside_board(square) && null_piece(square)) {
+            allowed_moves.push(square);
+            square = [square[0]+1,square[1]-1];
+        }
+        if (coord_inside_board(square) && enemy_piece(square,this.alliance))
+            allowed_moves.push(square);
+
+        square = [this.coord[0],this.coord[1]+1];
+		while(coord_inside_board(square) && null_piece(square)){
+            allowed_moves.push(square);
+            square = [square[0],square[1]+1];
+        }
+        if(coord_inside_board(square) && enemy_piece(square,this.alliance))
+            allowed_moves.push(square);
+
+        //half file #2
+        square = [this.coord[0],this.coord[1]-1];
+		while(coord_inside_board(square) && null_piece(square)){
+            allowed_moves.push(square);
+            square = [square[0],square[1]-1];
+        }
+        if(coord_inside_board(square) && enemy_piece(square,this.alliance))
+            allowed_moves.push(square);
+
+        //half rank #1
+        square = [this.coord[0]+1,this.coord[1]];
+		while(coord_inside_board(square) && null_piece(square)){
+            allowed_moves.push(square);
+            square = [square[0]+1,square[1]];
+        }
+        if(coord_inside_board(square) && enemy_piece(square,this.alliance))
+            allowed_moves.push(square);
+
+        //half rank #2
+        square = [this.coord[0]-1,this.coord[1]];
+		while(coord_inside_board(square) && null_piece(square)){
+            allowed_moves.push(square);
+            square = [square[0]-1,square[1]];
+        }
+        if(coord_inside_board(square) && enemy_piece(square,this.alliance))
+            allowed_moves.push(square);
+	}
 }
 
 class Rook {
@@ -159,6 +233,46 @@ class Rook {
 		this.id = 'R';
 		this.alliance = alliance;
 		this.coord = coord;
+	}
+
+	allowed_moves(){
+		allowed_moves = [];
+
+		//half file #1
+		let square = [this.coord[0],this.coord[1]+1];
+		while(coord_inside_board(square) && null_piece(square)){
+            allowed_moves.push(square);
+            square = [square[0],square[1]+1];
+        }
+        if(coord_inside_board(square) && enemy_piece(square,this.alliance))
+            allowed_moves.push(square);
+
+        //half file #2
+        square = [this.coord[0],this.coord[1]-1];
+		while(coord_inside_board(square) && null_piece(square)){
+            allowed_moves.push(square);
+            square = [square[0],square[1]-1];
+        }
+        if(coord_inside_board(square) && enemy_piece(square,this.alliance))
+            allowed_moves.push(square);
+
+        //half rank #1
+        square = [this.coord[0]+1,this.coord[1]];
+		while(coord_inside_board(square) && null_piece(square)){
+            allowed_moves.push(square);
+            square = [square[0]+1,square[1]];
+        }
+        if(coord_inside_board(square) && enemy_piece(square,this.alliance))
+            allowed_moves.push(square);
+
+        //half rank #2
+        square = [this.coord[0]-1,this.coord[1]];
+		while(coord_inside_board(square) && null_piece(square)){
+            allowed_moves.push(square);
+            square = [square[0]-1,square[1]];
+        }
+        if(coord_inside_board(square) && enemy_piece(square,this.alliance))
+            allowed_moves.push(square);
 	}
 }
 
