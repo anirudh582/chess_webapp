@@ -20,6 +20,23 @@ class Knight {
 		this.alliance = alliance;
 		this.coord = coord;
 	}
+
+	allowed_moves() {
+		allowed_moves = [];
+		let temp = [];
+		temp.push([this.coord[0]+2,this.coord[1]+1]);
+        temp.push([this.coord[0]+2,this.coord[1]-1]);
+        temp.push([this.coord[0]-2,this.coord[1]+1]);
+        temp.push([this.coord[0]-2,this.coord[1]-1]);
+        temp.push([this.coord[0]+1,this.coord[1]+2]);
+        temp.push([this.coord[0]+1,this.coord[1]-2]);
+        temp.push([this.coord[0]-1,this.coord[1]+2]);
+        temp.push([this.coord[0]-1,this.coord[1]-2]);
+        for(let i=0;i<temp.length;i++) {
+        	if(coord_inside_board(temp[i]) && !self_piece(temp[i],this.alliance))
+        		allowed_moves.push(temp[i]);
+        }
+	}
 }
 
 class Null {

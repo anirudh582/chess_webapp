@@ -26,3 +26,5 @@ var images_board_loaded = false
 
 var marked_piece = undefined;
 animation_image = undefined;
+
+var allowed_moves = [];

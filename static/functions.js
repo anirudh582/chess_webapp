@@ -97,11 +97,21 @@ function get_mouse_pos(){
 }
 
 function coord_inside_board(coord) {
-	return coord[0]>=0 && coord[1]>=0 && coord[1]<=7 && coord[1]<=7;
+	return coord[0]>=0 && coord[1]>=0 && coord[0]<=7 && coord[1]<=7;
 }
 
 function null_piece(coord){
 	return new_board.board[coord[1]][coord[0]].id=="-";
+}
+
+function self_piece(coord,alliance) {
+	if(new_board.board[coord[1]][coord[0]].id!="-")
+		return new_board.board[coord[1]][coord[0]].alliance == alliance;
+}
+
+function enemy_piece(coord,alliance) {
+	if(new_board.board[coord[1]][coord[0]].id!="-")
+		return new_board.board[coord[1]][coord[0]].alliance != alliance;
 }
 
 function create_piece(piece_id,alliance,coord){
@@ -136,7 +146,30 @@ function create_piece(piece_id,alliance,coord){
 function draw_transparent_green_tile(coord) {
 	m.fillStyle = "#46eb34";
 	m.globalAlpha = 0.4;
-	m.fillRect(coord[0]*tile_size,coord[1]*tile_size,tile_size,tile_size);
+	m.rect(coord[0]*tile_size,coord[1]*tile_size,tile_size,tile_size);
+	m.closePath();
+}
+
+function draw_green_circle(coord){
+	m.fillStyle = "#46eb34";
+	m.globalAlpha = 0.4;
+	m.arc(coord[0]*tile_size+tile_size/2,coord[1]*tile_size+tile_size/2,0.15*tile_size,2*Math.PI,false);
+	m.closePath();
+}
+
+function draw_red_circle(coord){
+	m.fillStyle = "#ff0000";
+	m.globalAlpha = 0.4;
+	m.arc(coord[0]*tile_size+tile_size/2,coord[1]*tile_size+tile_size/2,0.15*tile_size,2*Math.PI,false);
+	m.closePath();
+}
+
+function draw_attack_mark(coord){
+	m.fillStyle = "#46eb34";
+	m.globalAlpha = 0.4;
+	m.rect(coord[0]*tile_size,coord[1]*tile_size,tile_size,tile_size);
+	m.arc(coord[0]*tile_size+tile_size/2,coord[1]*tile_size+tile_size/2,tile_size/2,2*Math.PI,false);
+	m.closePath();
 }
 
 function generate_animation(init_coord,final_coord,callback) {
@@ -179,8 +212,26 @@ function generate_animation(init_coord,final_coord,callback) {
 	}
 }
 
+function mark_allowed_moves(allowed_moves,piece) {
+	filtered_moves = allowed_moves; //filter later by king check
+	for(let i=0; i<filtered_moves.length; i++){
+		if(flip){
+			if(null_piece(filtered_moves[i]))
+				draw_green_circle([filtered_moves[i][0],7-filtered_moves[i][1]]);
+			else if (enemy_piece(filtered_moves[i],piece.alliance))
+				draw_attack_mark([filtered_moves[i][0],7-filtered_moves[i][1]]);
+		}
+		else {
+			if(null_piece(filtered_moves[i]))
+				draw_green_circle(filtered_moves[i]);
+			else if (enemy_piece(filtered_moves[i],piece.alliance))
+				draw_attack_mark(filtered_moves[i]);
+		}
+	}
+}
 
 function accept_move(init_coord, final_coord) {
+	draw_transparent_green_tile(init_coord);
 	draw_transparent_green_tile(final_coord);
 	piece = new_board.board[init_coord[1]][init_coord[0]];
 	new_board.board[init_coord[1]][init_coord[0]] = new Null();
@@ -189,27 +240,42 @@ function accept_move(init_coord, final_coord) {
 	generate_animation(init_coord,final_coord,plot_board);
 }
 
+function coord_in_array(coord,allowed_moves){
+	for(let i=0; i<allowed_moves.length;i++)
+		if(allowed_moves[i][0]==coord[0] && allowed_moves[i][1]==coord[1])
+			return true;
+	return false;
+}
+
 function mouse_click() {
 	let mouse_pos = get_mouse_pos();
 	let coord = [Math.floor(mouse_pos.x/tile_size),Math.floor(mouse_pos.y/tile_size)];
 	if(!null_piece(coord) && marked_piece==undefined) {
+		m.beginPath();
 		m.clearRect(0,0,mark_canvas.width,mark_canvas.height);
 		draw_transparent_green_tile(coord);
 		marked_piece = new_board.board[coord[1]][coord[0]];
+		marked_piece.allowed_moves();
+		mark_allowed_moves(allowed_moves,marked_piece);
+		m.fill("evenodd");
 	}
 	else if (marked_piece!=undefined) {
-		if(coord[0]==marked_piece.coord[0] && coord[1] == marked_piece.coord[1]) {
+		if (coord_in_array(coord,allowed_moves)) {
+			m.beginPath();
 			m.clearRect(0,0,mark_canvas.width,mark_canvas.height);
-		}
-		else {
 			accept_move(marked_piece.coord,coord);
 			socket.emit('move', {init_coord:marked_piece.coord, final_coord:coord});
+			m.fill();
+		}
+		else {
+			m.clearRect(0,0,mark_canvas.width,mark_canvas.height);
 		}
 		marked_piece = undefined;
 	}
 }
 
 function receive_move(move) {
-	draw_transparent_green_tile(move.init_coord);
 	accept_move(move.init_coord,move.final_coord);
+	m.fill();
 }
+
