@@ -174,6 +174,11 @@ function draw_attack_mark(coord){
 
 function generate_animation(init_coord,final_coord,callback) {
 
+	if(flip){
+		init_coord = [init_coord[0],7-init_coord[1]];
+		final_coord = [final_coord[0], 7-final_coord[1]];
+	}
+
 	function exit(){
 		a.clearRect(0, 0, animation_canvas.width, animation_canvas.height);
 		callback();
@@ -230,14 +235,36 @@ function mark_allowed_moves(allowed_moves,piece) {
 	}
 }
 
-function accept_move(init_coord, final_coord) {
-	draw_transparent_green_tile(init_coord);
-	draw_transparent_green_tile(final_coord);
+function accept_move(init_coord, final_coord, receiving) {
+	let mark_init_coord = [];
+	let mark_final_coord = [];
+	if(flip && receiving){
+		mark_init_coord = [7-init_coord[0],7-init_coord[1]];
+		mark_final_coord = [7-final_coord[0],7-final_coord[1]];
+		init_coord = [7-init_coord[0],init_coord[1]];
+		final_coord = [7-final_coord[0],final_coord[1]];
+	}
+	draw_transparent_green_tile(mark_init_coord);
+	draw_transparent_green_tile(mark_final_coord);
 	piece = new_board.board[init_coord[1]][init_coord[0]];
 	new_board.board[init_coord[1]][init_coord[0]] = new Null();
 	new_board.board[final_coord[1]][final_coord[0]] = create_piece(piece.id,piece.alliance,final_coord);
+	//if(!qeeuning_up){
+	if(piece.id == 'K'){
+		new_board.update_king_position(final_coord,piece.alliance);
+		//move_rook_if_castling
+	}
+	if(piece.id=='R' || piece.id=='K')
+		new_board.board[final_coord[1]][final_coord[0]].set_moved();
+	//}
+
+	//else
+		//queen/knight/bishop/rook based on user input;
+
+	new_board.update_all_attacked_squares();
 	animation_img = images[piece.alliance+piece.id];
 	generate_animation(init_coord,final_coord,plot_board);
+	turn = (turn=='w') ? 'b':'w';
 }
 
 function coord_in_array(coord,allowed_moves){
@@ -250,13 +277,14 @@ function coord_in_array(coord,allowed_moves){
 function mouse_click() {
 	let mouse_pos = get_mouse_pos();
 	let coord = [Math.floor(mouse_pos.x/tile_size),Math.floor(mouse_pos.y/tile_size)];
-	if(!null_piece(coord) && marked_piece==undefined) {
+	if(flip)
+		coord = [coord[0],7-coord[1]];
+	if(!null_piece(coord) && marked_piece==undefined && turn==player_alliance) {
 		m.beginPath();
 		m.clearRect(0,0,mark_canvas.width,mark_canvas.height);
 		draw_transparent_green_tile(coord);
 		marked_piece = new_board.board[coord[1]][coord[0]];
-		marked_piece.allowed_moves();
-		console.log(allowed_moves);
+		marked_piece.get_allowed_moves();
 		mark_allowed_moves(allowed_moves,marked_piece);
 		m.fill("evenodd");
 	}
@@ -264,8 +292,11 @@ function mouse_click() {
 		if (coord_in_array(coord,allowed_moves)) {
 			m.beginPath();
 			m.clearRect(0,0,mark_canvas.width,mark_canvas.height);
-			accept_move(marked_piece.coord,coord);
-			socket.emit('move', {init_coord:marked_piece.coord, final_coord:coord});
+			accept_move(marked_piece.coord,coord,false);
+			if(flip)
+				socket.emit('move', {init_coord:[7-marked_piece.coord[0],marked_piece.coord[1]], final_coord:[7-coord[0],coord[1]]});
+			else
+				socket.emit('move', {init_coord:marked_piece.coord, final_coord:coord});
 			m.fill();
 		}
 		else {
@@ -276,7 +307,9 @@ function mouse_click() {
 }
 
 function receive_move(move) {
-	accept_move(move.init_coord,move.final_coord);
+	accept_move(move.init_coord,move.final_coord,true);
 	m.fill();
 }
+
+
 

@@ -5,6 +5,8 @@ import json
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'mysecret'
 socketio = SocketIO(app)
+count = 0
+player_alliance = ['w','b']
 
 @app.route('/')
 def index():
@@ -13,6 +15,11 @@ def index():
 @socketio.on('message')
 def handle_message(msg):
 	print('Message: ' + msg)
+	global count
+	global player_alliance
+	emit('alliance', player_alliance[count%2])
+	count+=1
+
 
 @socketio.on('move')
 def handle_move(move):
